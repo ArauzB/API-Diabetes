@@ -3,12 +3,13 @@
 const { ConnectionPool } = require('mssql');
 // SQL Server configuration
 var config = {
-  "user": "sqlserver", // Database username
-  "password": "Diabetes1", // Database password
-  "server": "34.173.87.172", // Server IP address
+  "user": "sa", // Database username
+  "password": "Arauz1234", // Database password
+  "server": "100.64.196.59", // Server IP address
   "database": "Diabetes", // Database name
   "options": {
-      "encrypt": false // Disable encryption
+      "encrypt": false, // Disable encryption
+      "trustServerCertificate": true
   }
 }
 

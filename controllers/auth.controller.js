@@ -167,7 +167,11 @@ const authMiddleware = (req, res, next) => {
     });
   }
 
+<<<<<<< HEAD
   jwt.verify(token, process.env.SECRET || 'analisis', (error, decoded) => {
+=======
+  jwt.verify(token,process.env.SECRET || 'default_secret', (error, decoded) => {
+>>>>>>> f0a037f0986ab08256a0c4f56974aa6586c1b83d
     if (error) {
       return res.status(401).json({
         message: "Token inválido",
