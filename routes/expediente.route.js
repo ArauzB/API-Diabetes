@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express();
 
-const {createProducto, editProducto, getAllProducto} = require('../controllers/expediente.controller');
+const { createExpediente, editExpediente, getAllExpedientes} = require('../controllers/expediente.controller');
 
-router.post('/createProducto', createProducto);
-router.put('/editProducto', editProducto);
-router.get('/getAllProducto', getAllProducto);
+router.post('/createExpediente', createExpediente);
+router.put('/editExpediente', editExpediente);
+router.get('/getAllExpedientes', getAllExpedientes);
 
 module.exports = router;

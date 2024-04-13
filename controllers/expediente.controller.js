@@ -1,6 +1,6 @@
-const { connection } = require("../services/bd");
+const pool  = require("../services/bd");
 
-const createProducto = async (req, res) => {
+const createExpediente = async (req, res) => {
     const {id_paciente, id_usuario, id_diabetes } = req.body;
     estado = 1;
     fecha = new  Date();  
@@ -27,24 +27,17 @@ const createProducto = async (req, res) => {
 };
 
 
-const editProducto = async (req, res) => {
-    const { id, nombre, precio, id_categoria,id_material } = req.body;
+const editExpediente = async (req, res) => {
+    const { id_diabetes, estado} = req.body;
 
-    if (!nombre.trim().length || !precio.trim().length || !id_categoria.trim().length || !id_material.trim().length) {
-            
-            res.json({
-                message: "Faltan datos",
-            });
-    
-        } else {    
+   
             connection.query(
                 "UPDATE PRODUCTOS SET ? WHERE ID = ?",
                 [
                     {
-                        NOMBRE: nombre,
-                        PRECIO: precio,
-                        ID_CATEGORIA: id_categoria,
-                        ID_MATERIAL: id_material
+                        ID_DIABETES: id_diabetes,
+                        ESTADO: estado,
+                        
                     },
                     id
                 ],
@@ -58,22 +51,23 @@ const editProducto = async (req, res) => {
                     }
                     }
                 );
-        }
+        
 }
 
-const getAllProducto = async (req, res) => {
-    connection.query("SELECT * FROM PRODUCTOS", async (error, results) => {
-        if (error) {
-            console.log(error);
-        } else {
-            res.json(results);
-        }
-        });
-}
+const getAllExpedientes = async (req, res) => {
+    try {
+      const request = pool.request(); // Obtén una nueva solicitud del pool
+      const result = await request.query('SELECT * FROM EXPEDIENTE');
+      res.json(result.recordset); // Enviar el resultado como JSON
+    } catch (error) {
+      console.error('Error al ejecutar la consulta:', error);
+      res.status(500).json({ message: 'Error interno del servidor' });
+    }
+  };
 
 
 module.exports = {
-    createProducto,
-    editProducto,
-    getAllProducto
+    createExpediente,
+    editExpediente,
+    getAllExpedientes
 }
