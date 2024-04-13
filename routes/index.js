@@ -8,9 +8,6 @@ const cargoMedicamento = require('./cargoMedicamento.route');
 const cargoCitas = require('./cargoCita.route');
 const cargoInsulina = require('./cargoInsulina.route');
 
-
-
-
 router.use('/auth', auth);
 router.use('/paciente', paciente);
 router.use('/expediente', expediente);

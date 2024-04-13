@@ -6,7 +6,7 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-    const ip = req.ip;
+ 
 
     if (!email.trim() || !password.trim()) {
       return res.status(400).json({
@@ -36,17 +36,7 @@ const login = async (req, res) => {
 
     const isPasswordValid = await bcryptjs.compare(password, user.CONTRASENA);
 
-    if (!isPasswordValid) {
-      // Registra el intento de inicio de sesión fallido por IP
-      registrarIntentoFallidoPorIP(ip);
-
-      return res.status(401).json({
-        message: "Contraseña incorrecta",
-        auth: false,
-        token: null,
-      });
-    }
-
+ 
     const token = generateToken(user);
 
     res.json({
@@ -54,6 +44,62 @@ const login = async (req, res) => {
       auth: true,
       token: token,
     });
+
+    
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Error interno del servidor",
+      auth: false,
+      token: null,
+    });
+  }
+};
+
+const loginPacientes = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+ 
+
+    if (!email.trim() || !password.trim()) {
+      return res.status(400).json({
+        message: "Faltan datos",
+        auth: false,
+        token: null,
+      });
+    }
+
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        message: "El correo electrónico no es válido",
+        auth: false,
+        token: null,
+      });
+    }
+
+    const user = await getUserByEmailPaciente(email);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "El usuario no existe",
+        auth: false,
+        token: null,
+      });
+    }
+
+    const isPasswordValid = await bcryptjs.compare(password, user.CONTRASENA);
+
+ 
+    const token = generateToken(user);
+
+    res.json({
+      message: "Bienvenido",
+      auth: true,
+      token: token,
+    });
+
+    
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -70,6 +116,11 @@ async function getUserByEmail(email) {
   return result.recordset[0] || null;
 }
 
+async function getUserByEmailPaciente(email) {
+  const result = await pool.request().input('Email', email).query('SELECT * FROM PACIENTE WHERE CORREO = @Email');
+  return result.recordset[0] || null;
+}
+
 // Función para generar un token JWT
 function generateToken(user) {
   const token = jwt.sign(
@@ -79,7 +130,7 @@ function generateToken(user) {
       nombre: user.nombre,
       rol: user.rol,
     },
-    process.env.SECRET || 'default_secret', // Utiliza un valor predeterminado si process.env.SECRET no está definido
+    process.env.SECRET || 'analisis', // Utiliza un valor predeterminado si process.env.SECRET no está definido
     { expiresIn: "24h" } // Expira en 24 horas
   );
   return token;
@@ -116,7 +167,7 @@ const authMiddleware = (req, res, next) => {
     });
   }
 
-  jwt.verify(token, process.env.SECRET, (error, decoded) => {
+  jwt.verify(token, process.env.SECRET || 'analisis', (error, decoded) => {
     if (error) {
       return res.status(401).json({
         message: "Token inválido",
@@ -234,6 +285,7 @@ const selectUsers = async  (req, res) => {
 
 module.exports = {
   login,
+  loginPacientes,
   logout,
   authMiddleware,
   createUsers,

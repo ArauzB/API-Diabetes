@@ -1,27 +1,16 @@
 const { connection } = require("../services/bd");
 
 const createProducto = async (req, res) => {
-    const {nombre, precio, id_material } = req.body;
+    const {id_paciente, id_usuario, id_diabetes } = req.body;
     estado = 1;
-
-   
-    material_id = parseInt(id_material);
-
-    console.log(material_id);
-
-    if (!nombre.trim().length ) {
-            
-            res.json({
-                message: "Faltan datos",
-            });
-    
-        } else {    
+    fecha = new  Date();  
             connection.query(
-                "INSERT INTO PRODUCTOS SET ?",
+                "INSERT INTO EXPEDIENTE SET ?",
                 {
-                    NOMBRE: nombre,
-                    PRECIO: precio,
-                    MATERIAL_ID: material_id,
+                    ID_PACIENTE: id_paciente,
+                    ID_USUARIO: id_usuario,
+                    ID_DAIBETES: id_diabetes,
+                    FECHA:fecha,
                     ESTADO: estado,
                    
                 },
@@ -33,10 +22,10 @@ const createProducto = async (req, res) => {
                         message: "Producto creado correctamente",
                         });
                     }
-                    }
-                );
-        }
-}
+                }
+            )
+};
+
 
 const editProducto = async (req, res) => {
     const { id, nombre, precio, id_categoria,id_material } = req.body;
