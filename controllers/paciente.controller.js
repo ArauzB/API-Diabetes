@@ -100,7 +100,6 @@ const changeEstado = async (req, res) => {
     res.status(500).json({ message: "Error interno del servidor" });
   }
 };
-
 // Función para generar una contraseña aleatoria
 function generateRandomPassword() {
   const numeros = "0123456789";

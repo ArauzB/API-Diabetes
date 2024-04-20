@@ -1,11 +1,14 @@
 const express = require('express');
 const router = express();
 
-const { createCompraWithDetalle, getCompras, getCompra} = require('../controllers/cargoMedicamento.controller');
+const {  crearMedicamento, obtenerMedicamentos, obtenerMedicamentoPorId, actualizarMedicamento, eliminarMedicamento} = require('../controllers/cargoMedicamento.controller');
 
-router.post('/compraOrden', createCompraWithDetalle);
-router.get('/getCompras', getCompras);
-router.get('/getCompra', getCompra);
+router.post('/medicamentos', crearMedicamento);
+router.get('/medicamentos', obtenerMedicamentos);
+router.get('/medicamentos/:id', obtenerMedicamentoPorId);
+router.put('/medicamentos/:id', actualizarMedicamento);
+router.delete('/medicamentos/:id', eliminarMedicamento);
+
 
 
 

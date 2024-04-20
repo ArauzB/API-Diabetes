@@ -119,7 +119,6 @@ async function getUserByEmailPaciente(email) {
   const result = await pool.request().input('Email', email).query('SELECT * FROM PACIENTE WHERE CORREO = @Email');
   return result.recordset[0] || null;
 }
-
 // Función para generar un token JWT
 function generateToken(user) {
   const token = jwt.sign(

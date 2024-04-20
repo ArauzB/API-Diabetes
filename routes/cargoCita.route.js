@@ -1,12 +1,11 @@
 const express = require('express');
 const router = express();
 
-const { crearMaterial,getMateriales, editMaterial, getMaterial} = require('../controllers/cargoCita.controller');
+const {    crearCita, getCitas, getCita} = require('../controllers/cargoCita.controller');
 
-router.post('/crearMaterial', crearMaterial);
-router.put('/editMaterial', editMaterial);
-router.get('/getMateriales', getMateriales);
-router.get('/getMaterial/:id', getMaterial);
+router.post('/crearCita', crearCita);
+router.get('/getCitas', getCitas);
+router.get('/getCita/:id', getCita);
 
 
 module.exports = router;

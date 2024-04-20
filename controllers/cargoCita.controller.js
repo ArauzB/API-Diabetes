@@ -1,104 +1,76 @@
-const { connection } = require("../services/bd");
-const jwt = require("jsonwebtoken");
-const bcryptjs = require("bcryptjs");
+const sql = require('mssql');
+const pool = require("../services/bd"); // Importa el pool de conexión
 
+const crearCita = async (req, res) => {
+    const { id_expediente, fecha, estado } = req.body;
 
-const crearMaterial = async (req, res) => {
-    const {nombre, precio,stock, proveedor} = req.body;
+    try {
+        const request = pool.request();
 
-    if (!nombre.trim().length ) {
+        // Ejecutar la consulta de inserción
+        const query = `
+            INSERT INTO CARGO_CITAS (ID_EXPEDIENTE, FECHA, ESTADO)
+            VALUES (@id_expediente, @fecha, @estado)
+        `;
+
+        await request.input('id_expediente', sql.Int, id_expediente)
+            .input('fecha', sql.DateTime, new Date(fecha))
+            .input('estado', sql.VarChar, estado)
+            .query(query);
 
         res.json({
-            message: "Faltan datos",
+            message: "Cita creada correctamente"
         });
-
-    } else {
-        connection.query(
-            "SELECT * FROM MATERIAL WHERE NOMBRE = ?",
-            [nombre],
-            async (error, results) => {
-              if (error) {
-                console.log(error);
-              } else {
-                if (results.length > 0) {
-                  res.json({
-                    message: "Este material ya esta registrado",
-                  });
-                }  else {
-                  connection.query(
-                    "INSERT INTO MATERIAL SET ?",
-                    {
-                      NOMBRE: nombre,
-                      PRECIO: precio,
-                      STOCK: stock,
-                      PROVEEDOR_ID: proveedor
-                    },
-                    async (error, results) => {
-                        if (error) {
-                            console.log(error);
-                        } else {
-                            res.json({
-                            message: "Material creado correctamente",
-                            });
-                        }
-                        }
-                    );
-                }
-                }
-            }
-        );
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Error al crear la cita"
+        });
     }
+};
 
+const getCitas = async (req, res) => {
+    try {
+        const request = pool.request();
+        const result = await request.query('SELECT * FROM CARGO_CITAS');
 
-}
+        res.json(result.recordset);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Error al obtener las citas"
+        });
+    }
+};
 
-const getMateriales = async (req, res) => {
-    connection.query('SELECT * FROM MATERIAL', async (error, results) => {
-        if (error) {
-            console.log(error);
-        } else {
-            res.json(results);
-        }
-    });
-}
-
-const getMaterial = async (req, res) => {
+const getCita = async (req, res) => {
     const { id } = req.params;
-    connection.query('SELECT * FROM MATERIAL WHERE ID = ?', [id], async (error, results) => {
-        if (error) {
-            console.log(error);
-        } else {
-            res.json({
-                message: "Material obtenido correctamente",
-                results
+
+    try {
+        const request = pool.request();
+        const result = await request.input('id', sql.Int, id)
+            .query('SELECT * FROM CARGO_CITAS WHERE ID_CARGOCITA = @id');
+
+        if (result.recordset.length === 0) {
+            return res.status(404).json({
+                message: "Cita no encontrada"
             });
         }
-    });
-}
 
-const editMaterial = async (req, res) => {
-    const { id } = req.params;
-    const { nombre, precio, stock, proveedor } = req.body;
-    connection.query('UPDATE MATERIAL SET ? WHERE ID = ?', [{
-        NOMBRE: nombre,
-        PRECIO: precio,
-        STOCK: stock,
-        PROVEEDOR_ID: proveedor
-    }, id], async (error, results) => {
-        if (error) {
-            console.log(error);
-        } else {
-            res.json({
-                message: "Material editado correctamente",
-            });
-        }
-    });
-}
+        res.json({
+            message: "Cita obtenida correctamente",
+            results: result.recordset
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Error al obtener la cita"
+        });
+    }
+};
 
 module.exports = {
-    crearMaterial,
-    getMateriales,
-    getMaterial,
-    editMaterial
-  };
-  
+    crearCita,
+    getCitas,
+    getCita
+};

@@ -1,15 +1,16 @@
 const express = require('express');
 const router = express();
 
-const {    createVentaWithDetalle,
-    getVentas,
-    getVentaById,
-    getVentasByCliente, cambiarEstadoVenta} = require('../controllers/cargoInsulina.controller');
+const {crearInsulina,
+    obtenerInsulinas,
+    obtenerInsulinaPorId,
+    actualizarInsulina,
+    eliminarInsulina} = require('../controllers/cargoInsulina.controller');
 
-router.post('/createVentaWithDetalle', createVentaWithDetalle);
-router.get('/getVentas', getVentas);
-router.get('/getVentaById/:id', getVentaById);
-router.get('/getVentasByCliente/:id', getVentasByCliente);
-router.post('/cambiarEstadoVenta', cambiarEstadoVenta);
+    router.post('/insulinas', crearInsulina);
+    router.get('/insulinas', obtenerInsulinas);
+    router.get('/insulinas/:id', obtenerInsulinaPorId);
+    router.put('/insulinas/:id', actualizarInsulina);
+    router.delete('/insulinas/:id', eliminarInsulina);
 
 module.exports = router;
