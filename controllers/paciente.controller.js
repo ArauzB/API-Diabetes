@@ -45,6 +45,11 @@ const crearCliente = async (req, res) => {
   }
 };
 
+async function getUserByEmail(email) {
+  const result = await pool.request().input('Email', email).query('SELECT * FROM PACIENTE WHERE CORREO = @Email');
+  return result.recordset[0] || null;
+}
+
 const editCliente = async (req, res) => {
   try {
     const { cui, nombres, apellidos, email, direccion } = req.body;

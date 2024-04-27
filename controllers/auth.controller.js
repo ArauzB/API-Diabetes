@@ -39,10 +39,13 @@ const login = async (req, res) => {
  
     const token = generateToken(user);
 
+    const id = user.ID_USUARIO;
+
     res.json({
       message: "Bienvenido",
       auth: true,
       token: token,
+      id
     });
 
     
@@ -93,9 +96,17 @@ const loginPacientes = async (req, res) => {
  
     const token = generateToken(user);
 
+    const id = user.ID_PACIENTE;
+    const nombre = user.NOMBRES;
+    const apellidos = user.APELLIDOS;
+
+
     res.json({
       message: "Bienvenido",
       auth: true,
+      id,
+      nombre,
+      apellidos,
       token: token,
     });
 
@@ -270,17 +281,57 @@ const createUsers = async (req, res) => {
   }
 };
 
-const selectUsers = async  (req, res) => {
-  (await connection).request().query("SELECT * FROM USUARIO", async (error, results) => {
-    if (error) {
-      console.log(error);
-    } else {
-      res.json(results);
-    }
-  }
-  );
-}
 
+const getAllCliente = async (req, res) => {
+
+  const {id} = req.body;
+  
+
+  try {
+    const result = await pool.request().query('SELECT * FROM PACIENTE');
+    res.json(result.recordset);
+  } catch (error) {
+    console.error('Error al ejecutar la consulta:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
+};
+
+
+const selectUsers = async (req, res) => {
+  const { id } = req.body;
+
+  try {
+      const result = await pool.request()
+          .input('id', id)
+          .query('SELECT * FROM USUARIO WHERE ID_USUARIO = @id');
+
+      if (result.recordset.length === 0) {
+          return res.status(404).json({
+              message: "Registro de insulina no encontrado"
+          });
+      }
+
+      const ID_USUARIO = result.recordset[0].ID_USUARIO;
+      const NOMBRES = result.recordset[0].NOMBRES;
+      const APELLIDOS = result.recordset[0].APELLIDOS;
+      const CORREO = result.recordset[0].CORREO;
+      
+
+      res.json({
+        
+        ID_USUARIO,
+        NOMBRES,
+        APELLIDOS,
+        CORREO
+
+      });
+  } catch (error) {
+      console.log(error);
+      res.status(500).json({
+          message: "Error al obtener el registro de insulina"
+      });
+  }
+};
 module.exports = {
   login,
   loginPacientes,

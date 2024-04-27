@@ -7,10 +7,10 @@ const {crearInsulina,
     actualizarInsulina,
     eliminarInsulina} = require('../controllers/cargoInsulina.controller');
 
-    router.post('/insulinas', crearInsulina);
-    router.get('/insulinas', obtenerInsulinas);
-    router.get('/insulinas/:id', obtenerInsulinaPorId);
-    router.put('/insulinas/:id', actualizarInsulina);
-    router.delete('/insulinas/:id', eliminarInsulina);
+    router.post('/crearInsulina', crearInsulina);
+    router.get('/obtenerInsulinas', obtenerInsulinas);
+    router.get('/obtenerInsulinaPorId/:id', obtenerInsulinaPorId);
+    router.put('/actualizarInsulina/:id', actualizarInsulina);
+    router.delete('/eliminarInsulina/:id', eliminarInsulina);
 
 module.exports = router;

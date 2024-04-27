@@ -5,7 +5,7 @@ const {    crearCita, getCitas, getCita} = require('../controllers/cargoCita.con
 
 router.post('/crearCita', crearCita);
 router.get('/getCitas', getCitas);
-router.get('/getCita/:id', getCita);
+router.post('/getCita', getCita);
 
 
 module.exports = router;

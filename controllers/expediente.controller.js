@@ -48,31 +48,55 @@ const obtenerExpedientes = async (req, res) => {
 
 // Función para obtener un expediente por su ID
 const obtenerExpedientePorId = async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.body;
 
     try {
         const request = pool.request();
         const result = await request
-            .input('id', sql.Int, id)
-            .query('SELECT * FROM EXPEDIENTE WHERE ID_EXPEDIENTE = @id');
+            .input('id', id)
+            .query(`
+                SELECT 
+                    e.ID_EXPEDIENTE,
+                    e.FECHA,
+                    e.ESTADO,
+                    p.NOMBRES AS NOMBRES_PACIENTE,
+                    p.APELLIDOS AS APELLIDOS_PACIENTE,
+                    p.DIRECCION,
+                    u.NOMBRES AS NOMBRES_USUARIO,
+                    u.APELLIDOS AS APELLIDOS_USUARIO,
+                    d.NOMBRE AS NOMBRE_DIABETES
+                FROM 
+                    EXPEDIENTE e
+                INNER JOIN 
+                    PACIENTE p ON e.ID_PACIENTE = p.ID_PACIENTE
+                INNER JOIN 
+                    USUARIO u ON e.ID_USUARIO = u.ID_USUARIO
+                INNER JOIN 
+                    TIPO_DIABETES d ON e.ID_DIABETES = d.ID_DIABETES
+                WHERE 
+                    e.ID_PACIENTE= @id
+                ORDER BY 
+                    e.ID_EXPEDIENTE ASC
+            `);
 
         if (result.recordset.length === 0) {
             return res.status(404).json({
-                message: "Expediente no encontrado"
+                message: "No se encontraron expedientes para este usuario"
             });
         }
 
         res.json({
-            message: "Expediente obtenido correctamente",
-            expediente: result.recordset[0]
+            message: "Expedientes obtenidos correctamente",
+            expedientes: result.recordset
         });
     } catch (error) {
         console.log(error);
         res.status(500).json({
-            message: "Error al obtener el expediente"
+            message: "Error al obtener los expedientes"
         });
     }
 };
+
 
 // Función para actualizar un expediente por su ID
 const actualizarExpediente = async (req, res) => {

@@ -52,13 +52,13 @@ const obtenerMedicamentos = async (req, res) => {
 
 // Función para obtener un medicamento por su ID
 const obtenerMedicamentoPorId = async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.body;
 
     try {
         const request = pool.request();
         const result = await request
             .input('id', sql.Int, id)
-            .query('SELECT * FROM CARGO_MEDICAMENTO WHERE ID_CARGOMEDICAMENTO = @id');
+            .query('SELECT * FROM CARGO_MEDICAMENTO WHERE ID_EXPEDIENTE = @id');
 
         if (result.recordset.length === 0) {
             return res.status(404).json({
@@ -68,7 +68,7 @@ const obtenerMedicamentoPorId = async (req, res) => {
 
         res.json({
             message: "Medicamento obtenido correctamente",
-            medicamento: result.recordset[0]
+            medicamento: result.recordset
         });
     } catch (error) {
         console.log(error);

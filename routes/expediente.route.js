@@ -8,10 +8,10 @@ const {     crearExpediente,
     eliminarExpediente} = require('../controllers/expediente.controller');
 
 
-    router.post('/expedientes', crearExpediente);
-    router.get('/expedientes', obtenerExpedientes);
-    router.get('/expedientes/:id', obtenerExpedientePorId);
-    router.put('/expedientes/:id', actualizarExpediente);
-    router.delete('/expedientes/:id', eliminarExpediente);
+    router.post('/crearExpediente', crearExpediente);
+    router.get('/obtenerExpedientes', obtenerExpedientes);
+    router.post('/obtenerExpedientePorId', obtenerExpedientePorId);
+    router.put('/actualizarExpediente/:id', actualizarExpediente);
+    router.delete('/eliminarExpediente/:id', eliminarExpediente);
 
 module.exports = router;

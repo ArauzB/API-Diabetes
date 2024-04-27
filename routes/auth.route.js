@@ -10,7 +10,7 @@ router.get("/verify", authMiddleware, (req, res) => {
     res.json({ message: "Ruta protegida accesible" });
   });
 router.post('/createUsers', createUsers);
-router.get( '/users', selectUsers );
+router.post( '/users', selectUsers );
 
 
 module.exports = router;
